@@ -1,0 +1,2486 @@
+.main {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background-color: hsl(var(--background));
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebarToggle {
+  background: transparent;
+  border: none;
+  color: hsl(var(--muted-foreground));
+  cursor: pointer;
+  padding: 0.3rem;
+  border-radius: var(--radius);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sidebarToggle:hover {
+  background-color: hsl(var(--muted));
+  color: hsl(var(--foreground));
+}
+
+.sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  border-right: 1px solid hsl(var(--border));
+  display: flex;
+  flex-direction: column;
+  background-color: hsl(var(--muted) / 0.3);
+  transition: margin-left 0.3s ease;
+  min-height: 0;
+}
+
+.sidebar.hidden {
+  margin-left: -260px;
+}
+
+.sidebarHeader {
+  height: 60px;
+  flex-shrink: 0;
+  padding: 0 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.chatHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sidebarHeader h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-radius: var(--radius);
+  font-weight: 500;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  gap: 0.25rem;
+  flex: 1;
+  min-height: 0;
+}
+
+.nav a, .backLink {
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.backLink {
+  font-size: 0.8rem;
+}
+
+/* Pinned to the very bottom of the sidebar, below the scrollable chat
+   history — a border separates it so it doesn't look like just another
+   history row. Extra bottom padding keeps the link off the very edge of the
+   viewport, and centering it (rather than left-aligning like the nav items
+   above it) sets it apart as a standalone footer action, not another row. */
+.sidebarFooter {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  padding: 0.9rem 1.25rem 1.35rem;
+  border-top: 1px solid hsl(var(--border));
+}
+
+.nav a:hover, .backLink:hover {
+  background-color: hsl(var(--muted));
+  color: hsl(var(--foreground));
+}
+
+.nav a.active {
+  background-color: hsl(var(--secondary));
+  color: hsl(var(--foreground));
+  font-weight: 500;
+}
+
+.chatArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-height: 0;
+  min-width: 0;
+}
+
+.chatHeader {
+  height: 60px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.chatHeader h3 {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.statusBadge {
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.statusBadge::before {
+  content: '';
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: hsl(var(--destructive));
+}
+
+.chatHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* ── Agent run-state indicator ──
+   Tells the user, at a glance, whether Ornith is idle, actively working,
+   paused waiting for their approval, or executing an approved action —
+   the four states that were previously indistinguishable at a glance. */
+.agentStatusBadge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.agentStatusBadge::before {
+  content: '';
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.agentStatusIdle {
+  color: hsl(var(--muted-foreground));
+}
+
+.agentStatusIdle::before {
+  background-color: #22c55e;
+}
+
+.agentStatusThinking {
+  color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.25);
+}
+
+.agentStatusThinking::before {
+  background-color: #3b82f6;
+  animation: agenticPulse 1.2s ease-in-out infinite;
+}
+
+.agentStatusWaiting {
+  color: hsl(var(--destructive));
+  background-color: hsl(var(--destructive) / 0.1);
+  border-color: hsl(var(--destructive) / 0.3);
+}
+
+.agentStatusWaiting::before {
+  background-color: hsl(var(--destructive));
+  animation: agenticPulse 1s ease-in-out infinite;
+}
+
+.agentStatusExecuting {
+  color: #f59e0b;
+  background-color: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.agentStatusExecuting::before {
+  background-color: #f59e0b;
+  animation: agenticPulse 0.8s ease-in-out infinite;
+}
+
+@keyframes agenticPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(1.5); }
+}
+
+/* ── Per-chat auto-approve toggle ──
+   Deliberately loud when ON: this bypasses the human-in-the-loop gate for
+   every dangerous tool call in the CURRENT chat only (resets when you
+   switch or reload). Off by default, and never persisted. */
+.autoApproveToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid hsl(var(--border));
+  background: transparent;
+  color: hsl(var(--muted-foreground));
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  font-family: inherit;
+}
+
+.autoApproveToggle:hover {
+  border-color: hsl(var(--foreground) / 0.3);
+}
+
+.autoApproveToggleOn {
+  border-color: #f59e0b;
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+.autoApproveToggleOn:hover {
+  border-color: #f59e0b;
+}
+
+.autoApproveSwitch {
+  width: 26px;
+  height: 15px;
+  border-radius: 999px;
+  background-color: hsl(var(--muted-foreground) / 0.35);
+  position: relative;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease;
+}
+
+.autoApproveSwitch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background-color: white;
+  transition: left 0.15s ease;
+}
+
+.autoApproveToggleOn .autoApproveSwitch {
+  background-color: #f59e0b;
+}
+
+.autoApproveToggleOn .autoApproveSwitch::after {
+  left: 13px;
+}
+
+.messagesContainer {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 0;
+}
+
+.emptyState {
+  margin-top: 14vh;
+  text-align: center;
+  max-width: 640px;
+  width: 100%;
+}
+
+.emptyState h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.5rem;
+}
+
+.emptyState p {
+  color: hsl(var(--muted-foreground));
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* Starter prompts on the blank chat screen — shortcuts into the agent's
+   real tool categories (files, terminal, database, generated documents)
+   rather than a wall of empty space. Clicking one fills the composer
+   instead of sending immediately, so the text stays editable. */
+.starterGrid {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  text-align: left;
+}
+
+.starterCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.9rem 1rem;
+  background-color: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+}
+
+.starterCard:hover {
+  border-color: hsl(var(--foreground) / 0.3);
+  background-color: hsl(var(--muted) / 0.5);
+  transform: translateY(-1px);
+}
+
+.starterCard:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+.starterIcon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: calc(var(--radius) - 4px);
+  background-color: hsl(var(--muted));
+  color: hsl(var(--foreground) / 0.75);
+}
+
+.starterText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.starterTitle {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+
+.starterPrompt {
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (max-width: 640px) {
+  .starterGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Chat Messages */
+.messageList {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-bottom: 2rem;
+}
+
+.messageWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 4px 0;
+}
+
+.messageContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-width: 85%;
+  min-width: 0;
+}
+
+/* Labels hidden — Gemini-style has no role labels */
+.agentLabel, .userLabel {
+  display: none;
+}
+
+.agent {
+  align-items: flex-start;
+}
+
+.user {
+  align-items: flex-end;
+}
+
+/* ── Bubble base ── */
+.bubble {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  width: fit-content;
+  max-width: 100%;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+/* Agent: flat text, no border, no background */
+.agent .bubble {
+  background-color: transparent;
+  border: none;
+  padding: 0.25rem 0;
+  color: hsl(var(--foreground));
+}
+
+/* User: pill-shaped bubble */
+.user .bubble {
+  background-color: hsl(var(--muted));
+  color: hsl(var(--foreground));
+  border-radius: 1.5rem;
+  padding: 0.7rem 1.15rem;
+  max-width: 100%;
+}
+
+/* ── Action bar (Gemini-style) ── */
+.msgActions {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  margin-top: 4px;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  flex-wrap: nowrap;
+}
+
+.msgActions.show {
+  opacity: 1;
+}
+
+.messageWrapper:hover .msgActions {
+  opacity: 1;
+}
+
+.actionIcon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: hsl(var(--muted-foreground));
+  padding: 5px 6px;
+  border-radius: 50%;
+  font-size: 14px;
+  line-height: 1;
+  transition: background 0.15s, color 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+}
+
+.actionIcon:hover {
+  background: hsl(var(--muted));
+  color: hsl(var(--foreground));
+}
+
+.actionIcon:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.actionLabel {
+  background: none;
+  border: 1px solid hsl(var(--border));
+  color: hsl(var(--muted-foreground));
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-left: 4px;
+  font-family: inherit;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+
+.actionLabel:hover {
+  border-color: hsl(var(--foreground));
+  color: hsl(var(--foreground));
+  background: hsl(var(--muted) / 0.5);
+}
+
+.actionLabel:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.compactedMessage {
+  opacity: 0.4;
+  transition: opacity 0.2s ease;
+}
+
+.compactedMessage:hover {
+  opacity: 0.8;
+}
+
+.summaryBlock {
+  display: flex;
+  gap: 1rem;
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background-color: hsl(var(--muted) / 0.5);
+  border: 1px dashed hsl(var(--border));
+  border-radius: var(--radius);
+  align-items: center;
+  justify-content: center;
+}
+
+.summaryIcon {
+  font-size: 1.5rem;
+}
+
+.summaryContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  color: hsl(var(--muted-foreground));
+  font-size: 0.875rem;
+}
+
+.summaryContent strong {
+  color: hsl(var(--foreground));
+  font-size: 0.95rem;
+}
+
+.rememberBadge {
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-style: italic;
+  border-top: 1px solid hsl(var(--border));
+  padding-top: 0.5rem;
+}
+
+/* ── Tool Trace Blocks (Antigravity-style) ── */
+.traceBlock {
+  margin: 2px 0;
+  border-radius: 8px;
+  border: 1px solid hsl(var(--border) / 0.5);
+  background: hsl(var(--muted) / 0.3);
+  overflow: hidden;
+  font-size: 0.8rem;
+  max-width: 700px;
+}
+
+.traceSummary {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 5px 10px;
+  cursor: pointer;
+  user-select: none;
+  color: hsl(var(--muted-foreground));
+  list-style: none;
+}
+
+.traceSummary::-webkit-details-marker { display: none; }
+
+.traceSummary:hover {
+  background: hsl(var(--muted) / 0.5);
+  color: hsl(var(--foreground));
+}
+
+.traceIcon {
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.traceTool {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: hsl(var(--foreground));
+  font-weight: 500;
+}
+
+.traceLabel {
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.traceResult {
+  margin: 0;
+  padding: 8px 12px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: hsl(var(--foreground) / 0.85);
+  background: hsl(var(--background) / 0.6);
+  white-space: pre-wrap;
+  word-break: break-word;
+  border-top: 1px solid hsl(var(--border) / 0.5);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* ── Turn-grouped trace block (Antigravity-style single collapsible) ── */
+.turnTraceGroup {
+  margin: 2px 0 6px 0;
+  border: none;
+}
+
+.turnTraceSummary {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  color: hsl(var(--muted-foreground));
+  cursor: pointer;
+  list-style: none;
+  padding: 3px 0;
+  user-select: none;
+  width: fit-content;
+}
+
+.turnTraceSummary::-webkit-details-marker { display: none; }
+
+.turnTraceSummary:hover {
+  color: hsl(var(--foreground));
+}
+
+.turnTraceChevron {
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.turnTraceGroup[open] .turnTraceChevron {
+  transform: rotate(90deg);
+}
+
+.turnTraceBody {
+  margin-top: 4px;
+  padding: 6px 0 6px 16px;
+  border-left: 2px solid hsl(var(--border));
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.traceItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: hsl(var(--muted-foreground));
+  padding: 1px 0;
+}
+
+.traceResultInline {
+  display: inline-flex;
+  align-items: center;
+}
+
+.traceResultToggle {
+  font-size: 0.72rem;
+  color: hsl(var(--muted-foreground));
+  cursor: pointer;
+  padding: 1px 6px;
+  border: 1px solid hsl(var(--border) / 0.5);
+  border-radius: 4px;
+  background: hsl(var(--muted) / 0.3);
+  list-style: none;
+}
+
+.traceResultToggle::-webkit-details-marker { display: none; }
+.traceResultToggle:hover { background: hsl(var(--muted)); }
+
+/* Input Area */
+.inputArea {
+  padding: 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.inputWrapper {
+  width: 100%;
+  max-width: 800px;
+  position: relative;
+  background-color: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  transition: border-color 0.2s ease;
+}
+
+.inputRow {
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+}
+
+/* "/" command palette — pops up above the composer (.inputWrapper is
+   already position:relative) while the whole textarea is still a bare
+   "/command" being typed. Scoped scroll so a long filtered list never
+   pushes past the top of the viewport. */
+.slashMenu {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  margin-bottom: 0.6rem;
+  max-height: 320px;
+  overflow-y: auto;
+  background-color: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius) * 1.25);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  padding: 0.4rem;
+}
+
+.slashMenuGroup + .slashMenuGroup {
+  margin-top: 0.3rem;
+  padding-top: 0.3rem;
+  border-top: 1px solid hsl(var(--border));
+}
+
+.slashMenuGroupLabel {
+  padding: 0.3rem 0.6rem 0.2rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+}
+
+.slashMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  border: none;
+  background: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  color: hsl(var(--foreground));
+}
+
+.slashMenuItemActive {
+  background-color: hsl(var(--muted));
+}
+
+.slashMenuIcon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: hsl(var(--muted-foreground));
+}
+
+.slashMenuCommand {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: var(--font-geist-mono, monospace);
+  color: hsl(var(--foreground));
+}
+
+.slashMenuLabel {
+  min-width: 0;
+  font-size: 0.78rem;
+  color: hsl(var(--muted-foreground));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inputWrapper:focus-within {
+  border-color: hsl(var(--ring));
+}
+
+.textarea {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 0.75rem;
+  font-family: inherit;
+  font-size: 0.875rem;
+  color: hsl(var(--foreground));
+  resize: none;
+  outline: none;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.textarea::placeholder {
+  color: hsl(var(--muted-foreground));
+}
+
+.sendBtn {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  margin: 0.25rem;
+}
+
+.sendBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sendBtn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+/* HITL UI Elements */
+.bubbleAction {
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  font-size: 0.8rem;
+  background-color: hsl(var(--muted));
+  color: hsl(var(--muted-foreground));
+  font-family: var(--font-mono);
+}
+
+.hitlBox {
+  background-color: hsl(var(--destructive) / 0.05);
+  border: 1px solid hsl(var(--destructive) / 0.2);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  width: 100%;
+}
+
+.hitlBox h4 {
+  color: hsl(var(--destructive));
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.hitlBox pre {
+  background-color: hsl(var(--background));
+  padding: 1rem;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid hsl(var(--border));
+}
+
+.hitlActions {
+  display: flex;
+  gap: 1rem;
+}
+
+.approveBtn {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius);
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.approveBtn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.denyBtn {
+  background-color: transparent;
+  color: hsl(var(--foreground));
+  border: 1px solid hsl(var(--border));
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.denyBtn:hover {
+  background-color: hsl(var(--muted));
+  border-color: hsl(var(--foreground) / 0.3);
+}
+
+.approveBtn:focus-visible,
+.denyBtn:focus-visible,
+.sendBtn:focus-visible,
+.newChatBtn:focus-visible,
+.attachBtn:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* CSS History Elements */
+.newChatWrapper {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.newChatBtn {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: transparent;
+  border: 1px dashed hsl(var(--border));
+  color: hsl(var(--foreground));
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.newChatBtn:hover {
+  background-color: hsl(var(--muted));
+  border-color: hsl(var(--muted-foreground));
+}
+
+/* Sidebar chat search — filters the history list client-side by title. */
+.historySearchWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 1rem 1.5rem 0.5rem;
+}
+
+.historySearchIcon {
+  position: absolute;
+  left: 0.6rem;
+  color: hsl(var(--muted-foreground));
+  pointer-events: none;
+}
+
+.historySearchInput {
+  width: 100%;
+  padding: 0.45rem 1.75rem 0.45rem 1.9rem;
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--background) / 0.6);
+  color: hsl(var(--foreground));
+  font-size: 0.8rem;
+  font-family: inherit;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.historySearchInput::placeholder {
+  color: hsl(var(--muted-foreground));
+}
+
+.historySearchInput:focus {
+  outline: none;
+  border-color: hsl(var(--ring));
+  background-color: hsl(var(--background));
+}
+
+.historySearchClear {
+  position: absolute;
+  right: 0.4rem;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: hsl(var(--muted-foreground));
+  font-size: 0.9rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.historySearchClear:hover {
+  background-color: hsl(var(--muted));
+  color: hsl(var(--foreground));
+}
+
+/* Date-grouped history: Pinned / Today / Yesterday / Previous 7 Days / Older */
+.historyGroup + .historyGroup {
+  margin-top: 1rem;
+}
+
+.historyGroupLabel {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: hsl(var(--foreground) / 0.6);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  padding: 0 0.75rem;
+}
+
+.historyEmptyState {
+  padding: 1.5rem 0.75rem;
+  text-align: center;
+  color: hsl(var(--muted-foreground));
+  font-size: 0.8rem;
+}
+
+.historyList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  overflow-y: auto;
+  max-height: calc(100vh - 300px);
+  padding: 0 1rem;
+}
+
+/* History Item & Dropdown CSS */
+.historyGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.historyItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: var(--radius);
+  position: relative;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.historyItem:hover {
+  background-color: hsl(var(--muted) / 0.5);
+}
+
+.historyItem.active {
+  background-color: hsl(var(--secondary));
+  box-shadow: inset 2px 0 0 hsl(var(--primary));
+}
+
+.historyLink {
+  flex: 1;
+  min-width: 0;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+}
+
+.historyLinkTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.historyLinkTitleText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Preview of the message content that matched a search — only rendered
+   when the query hit the chat body rather than its title. */
+.historySnippet {
+  width: 100%;
+  font-size: 0.72rem;
+  color: hsl(var(--muted-foreground) / 0.8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.searchHighlight {
+  background-color: hsl(var(--primary) / 0.28);
+  color: inherit;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+.historyItem.active .historyLink {
+  color: hsl(var(--foreground));
+  font-weight: 500;
+}
+
+.historyItem:hover .historyLink {
+  color: hsl(var(--foreground));
+}
+
+.pinIcon {
+  font-size: 0.8rem;
+}
+
+.menuContainer {
+  position: relative;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  padding-right: 0.5rem;
+}
+
+.historyItem:hover .menuContainer,
+.menuContainer:focus-within,
+.menuContainer.menuOpen {
+  opacity: 1;
+}
+
+.menuDotsBtn {
+  background: transparent;
+  border: none;
+  color: hsl(var(--muted-foreground));
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menuDotsBtn:hover, .menuDotsBtn.activeDots {
+  background: hsl(var(--border));
+  color: hsl(var(--foreground));
+}
+
+.dropdownMenu {
+  position: fixed;
+  background-color: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+  min-width: 160px;
+  overflow: hidden;
+  padding: 0.25rem;
+}
+
+.menuOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+}
+
+.titleSpinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid hsl(var(--muted-foreground));
+  border-top-color: hsl(var(--primary));
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.dropdownMenu button {
+  background: transparent;
+  border: none;
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  color: hsl(var(--foreground));
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+}
+
+.dropdownMenu button:hover {
+  background-color: hsl(var(--muted));
+}
+
+.dangerText {
+  color: hsl(var(--destructive)) !important;
+}
+
+.dangerText:hover {
+  background-color: hsl(var(--destructive) / 0.1) !important;
+}
+
+.menuIcon {
+  margin-right: 0.5rem;
+  color: hsl(var(--muted-foreground));
+  transition: color 0.2s ease;
+}
+
+.dropdownMenu button:hover .menuIcon {
+  color: hsl(var(--foreground));
+}
+
+.dangerText .menuIcon,
+.dangerText:hover .menuIcon {
+  color: hsl(var(--destructive));
+}
+
+.editInput {
+  flex: 1;
+  background: hsl(var(--background));
+  border: 1px solid hsl(var(--primary));
+  color: hsl(var(--foreground));
+  border-radius: var(--radius);
+  padding: 0.4rem 0.5rem;
+  font-size: 0.875rem;
+  margin: 0.1rem;
+  outline: none;
+  width: calc(100% - 1rem);
+}
+
+/* Image Attachment Styles */
+.previewSection {
+  padding: 0.5rem 0.5rem 0 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.inputImagePreviewContainer {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  overflow: visible;
+  cursor: pointer;
+  border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--muted));
+  transition: opacity 0.2s;
+}
+
+.inputImagePreviewContainer:hover {
+  opacity: 0.8;
+}
+
+.inputImagePreview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.removeImageBtn {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: hsl(var(--foreground));
+  color: hsl(var(--background));
+  border: none;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  z-index: 10;
+}
+
+.removeImageBtn:hover {
+  background-color: hsl(var(--destructive));
+  color: hsl(var(--destructive-foreground));
+}
+
+.clickableImage {
+  cursor: zoom-in;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.clickableImage:hover {
+  opacity: 0.9;
+}
+
+/* Modal CSS */
+.imageModalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  cursor: zoom-out;
+}
+
+.imageModalContent {
+  max-width: 90vw;
+  max-height: 90vh;
+}
+
+.imageModalContent img {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
+}
+.attachBtn {
+  background: transparent;
+  border: none;
+  color: hsl(var(--muted-foreground));
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
+}
+
+.attachBtn:hover {
+  background-color: hsl(var(--muted));
+  color: hsl(var(--foreground));
+}
+
+.attachBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.chatImageGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 0.75rem;
+}
+
+.chatImageGrid:empty {
+  display: none;
+}
+
+.chatImage {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: calc(var(--radius) - 2px);
+  border: 1px solid hsl(var(--border));
+  cursor: zoom-in;
+}
+
+/* Canvas Area */
+.main.hasCanvas .chatArea {
+  flex: 0 0 40%;
+  max-width: 40%;
+  border-right: 1px solid hsl(var(--border));
+}
+
+.canvasArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: hsl(var(--card));
+  height: 100%;
+  overflow: hidden;
+}
+
+.canvasHeader {
+  height: 60px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  border-bottom: 1px solid hsl(var(--border));
+  background-color: hsl(var(--muted) / 0.3);
+}
+
+.canvasInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.canvasIcon {
+  font-size: 1.2rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.canvasHeader h3 {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.closeCanvasBtn {
+  background: transparent;
+  border: 1px solid hsl(var(--border));
+  color: hsl(var(--muted-foreground));
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.closeCanvasBtn:hover {
+  background-color: hsl(var(--destructive));
+  color: hsl(var(--destructive-foreground));
+  border-color: hsl(var(--destructive));
+}
+
+.canvasContent {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+  display: flex;
+}
+
+.codeCanvas {
+  flex: 1;
+  margin: 0;
+  padding: 1.5rem;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  overflow: auto;
+}
+
+.previewIframe {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background-color: #ffffff;
+}
+
+/* Canvas header actions row */
+.canvasActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Preview / Code toggle pill */
+.canvasToggle {
+  display: flex;
+  background-color: hsl(var(--muted));
+  border-radius: 6px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.toggleBtn {
+  background: transparent;
+  border: none;
+  font-size: 0.78rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  color: hsl(var(--muted-foreground));
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.toggleBtn.toggleActive {
+  background-color: hsl(var(--card));
+  color: hsl(var(--foreground));
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+/* Download button in canvas header */
+.downloadBtn {
+  background: transparent;
+  border: 1px solid hsl(var(--border));
+  color: hsl(var(--muted-foreground));
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--radius);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.downloadBtn:hover {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-color: hsl(var(--primary));
+}
+
+/* File Attachment Card inside chat bubble */
+.fileCard {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  background-color: hsl(var(--muted) / 0.5);
+  border: 1px solid hsl(var(--border));
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+  user-select: none;
+}
+
+.fileCard:hover {
+  background-color: hsl(var(--muted));
+  border-color: hsl(var(--ring));
+}
+
+.fileCardIcon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.fileCardInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.fileCardName {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fileCardMeta {
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.fileCardDownload {
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid hsl(var(--border));
+  color: hsl(var(--muted-foreground));
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  transition: all 0.15s;
+}
+
+.fileCardDownload:hover {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-color: hsl(var(--primary));
+}
+
+/* Downloadable-file variant of .fileCard — used for the docx/xlsx/pptx links
+   Ornith attaches to its replies (generate_word_doc / generate_excel_file /
+   generate_presentation). Same card language as the canvas-opening file
+   cards above, but with a primary-tinted accent so it visually reads as
+   "get this file" rather than "open this in the canvas", plus the small
+   download-icon chip on the right for an unmistakable click target — the
+   whole card is clickable too, same as ChatGPT/Claude/Gemini attachments. */
+a.fileCard.fileCardIsDownload {
+  text-decoration: none;
+  border-color: hsl(var(--primary) / 0.35);
+  background-color: hsl(var(--primary) / 0.07);
+}
+
+a.fileCard.fileCardIsDownload:hover {
+  background-color: hsl(var(--primary) / 0.14);
+  border-color: hsl(var(--primary));
+}
+
+a.fileCard.fileCardIsDownload .fileCardIcon {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background-color: hsl(var(--primary) / 0.15);
+  font-size: 1.15rem;
+}
+
+a.fileCard.fileCardIsDownload .fileCardDownload {
+  color: hsl(var(--primary));
+  border-color: hsl(var(--primary) / 0.4);
+  pointer-events: none;
+}
+
+a.fileCard.fileCardIsDownload:hover .fileCardDownload {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-color: hsl(var(--primary));
+}
+
+/* ── Markdown content inside chat bubbles ── */
+.markdownContent {
+  line-height: 1.65;
+  font-size: inherit;
+  color: inherit;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  /* Deliberately NOT white-space: pre-wrap. ReactMarkdown already turns
+     real paragraph/list structure into proper <p>/<li> elements — that
+     structure is what should control spacing. pre-wrap additionally
+     preserved every literal "\n" in the underlying markup (including the
+     whitespace-only text nodes that sit between block siblings like
+     <li> and its <p>), which the browser would otherwise collapse away as
+     insignificant. The result was every list item / file-card getting an
+     extra forced line break on top of its normal margin — the uneven,
+     "not rapi" double-spaced look. Letting whitespace collapse normally
+     (the default) is what ChatGPT/Claude/Gemini's own renderers do. */
+}
+
+.markdownContent > *:first-child { margin-top: 0; }
+.markdownContent > *:last-child  { margin-bottom: 0; }
+
+.markdownContent p { margin: 0 0 0.5em; }
+
+.markdownContent h1,
+.markdownContent h2,
+.markdownContent h3,
+.markdownContent h4 {
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 0.9em 0 0.35em;
+}
+.markdownContent h1 { font-size: 1.2rem; }
+.markdownContent h2 { font-size: 1.05rem; }
+.markdownContent h3 { font-size: 0.95rem; }
+
+.markdownContent ul,
+.markdownContent ol {
+  padding-left: 1.4em;
+  margin: 0.2em 0 0.5em;
+}
+
+.markdownContent li { margin-bottom: 0.15em; }
+
+.markdownContent blockquote {
+  border-left: 3px solid hsl(var(--border));
+  padding: 0.2rem 0.65rem;
+  margin: 0.4em 0;
+  color: hsl(var(--muted-foreground));
+  font-style: italic;
+}
+
+.markdownContent hr {
+  border: none;
+  border-top: 1px solid hsl(var(--border));
+  margin: 0.6em 0;
+}
+
+/* GFM Tables */
+.markdownContent table {
+  border-collapse: collapse;
+  margin: 0.6em 0;
+  font-size: 0.82rem;
+  display: block;
+  overflow-x: auto;
+  width: max-content;
+  max-width: 100%;
+}
+
+.markdownContent th,
+.markdownContent td {
+  border: 1px solid hsl(var(--border));
+  padding: 0.35em 0.7em;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.markdownContent th {
+  background-color: hsl(var(--muted));
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+
+.markdownContent tr:nth-child(even) td {
+  background-color: hsl(var(--muted) / 0.25);
+}
+
+.markdownContent tr:hover td {
+  background-color: hsl(var(--muted) / 0.45);
+  transition: background-color 0.1s;
+}
+
+/* Inline code */
+.mdInlineCode {
+  background-color: hsl(var(--muted));
+  padding: 0.1em 0.38em;
+  border-radius: 4px;
+  font-family: 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  font-size: 0.84em;
+  color: hsl(var(--foreground));
+  /* Prevent inline code from overflowing the bubble */
+  word-break: break-all;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+/* Code block inside chat */
+.mdCodeBlock {
+  background-color: hsl(var(--muted));
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+  padding: 0.65rem 0.9rem;
+  margin: 0.4em 0;
+  /* Scroll horizontally for long lines instead of overflowing bubble */
+  overflow-x: auto;
+  max-width: 100%;
+  font-family: 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  /* Ensure the block itself doesn't push parent wider */
+  display: block;
+  box-sizing: border-box;
+}
+
+.mdCodeBlock code {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+  color: hsl(var(--foreground));
+  white-space: pre;
+  display: block;
+}
+
+/* Ensure markdownContent itself never overflows its bubble */
+.markdownContent {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Settings modal
+   Rebuilt from scratch (was: raw inline styles + a hand-edited JSON
+   textarea for MCP servers). Everything below reads from the same
+   hsl(var(--...)) tokens as the rest of the app, so it follows dark/light
+   automatically instead of the old hardcoded hex colors — which is also
+   why the old version looked visually disconnected from everything else.
+   ══════════════════════════════════════════════════════════════════════ */
+
+.settingsOverlay {
+  position: fixed;
+  inset: 0;
+  background: hsl(0 0% 0% / 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: settingsOverlayIn 0.15s ease both;
+}
+
+.settingsOverlayClosing {
+  animation: settingsOverlayOut 0.16s ease both;
+}
+
+@keyframes settingsOverlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes settingsOverlayOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.settingsPanel {
+  background: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  border: 1px solid hsl(var(--border));
+  border-radius: 14px;
+  width: 100%;
+  max-width: 620px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 70px hsl(0 0% 0% / 0.45);
+  animation: settingsPanelIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.settingsPanelClosing {
+  animation: settingsPanelOut 0.16s ease both;
+}
+
+@keyframes settingsPanelIn {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes settingsPanelOut {
+  from { opacity: 1; transform: scale(1) translateY(0); }
+  to { opacity: 0; transform: scale(0.97) translateY(4px); }
+}
+
+.settingsHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid hsl(var(--border));
+  flex-shrink: 0;
+}
+
+.settingsHeaderTitle {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.settingsHeaderTitle h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.settingsHeaderHint {
+  font-size: 12.5px;
+  color: hsl(var(--muted-foreground));
+  margin-top: 4px;
+}
+
+.settingsCloseBtn {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: hsl(var(--muted-foreground));
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.settingsCloseBtn:hover {
+  background-color: hsl(var(--muted));
+  color: hsl(var(--foreground));
+  border-color: hsl(var(--border));
+}
+
+.settingsBody {
+  padding: 20px 24px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.settingsSection {
+  margin-bottom: 26px;
+}
+
+.settingsSection:last-child {
+  margin-bottom: 0;
+}
+
+.settingsSectionTitle {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+  margin-bottom: 12px;
+}
+
+.settingsRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.settingsField {
+  margin-top: 14px;
+}
+
+.settingsField:first-child {
+  margin-top: 0;
+}
+
+.settingsLabel {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: hsl(var(--foreground) / 0.85);
+  margin-bottom: 6px;
+}
+
+.settingsInput {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 12px;
+  background: hsl(var(--background));
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+  color: hsl(var(--foreground));
+  font-size: 13.5px;
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+
+.settingsInput:focus {
+  outline: none;
+  border-color: hsl(var(--ring));
+}
+
+.settingsInput::placeholder {
+  color: hsl(var(--muted-foreground) / 0.7);
+}
+
+.settingsHint {
+  font-size: 12px;
+  color: hsl(var(--muted-foreground));
+  margin-top: 5px;
+  line-height: 1.45;
+}
+
+/* Workspace Root: text input + "Browse…" button that opens the inline
+   folder picker below it. */
+.workspaceRootRow {
+  display: flex;
+  gap: 8px;
+}
+
+.workspaceRootRow .settingsInput {
+  flex: 1;
+  min-width: 0;
+}
+
+.browseBtn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  background: hsl(var(--muted));
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+  color: hsl(var(--foreground));
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.browseBtn:hover {
+  background: hsl(var(--muted) / 0.6);
+  border-color: hsl(var(--foreground) / 0.3);
+}
+
+/* Server-side directory browser — a stand-in for a native folder dialog
+   the browser can't give a real absolute path from (see the API route's
+   own comment). Click-to-navigate list, same visual language as the rest
+   of the Settings panel. */
+.folderPicker {
+  margin-top: 10px;
+  border: 1px solid hsl(var(--border));
+  border-radius: 10px;
+  overflow: hidden;
+  background: hsl(var(--background));
+}
+
+.folderPickerHeader {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 10px;
+  border-bottom: 1px solid hsl(var(--border));
+  background: hsl(var(--muted) / 0.4);
+}
+
+.folderPickerNavBtn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid hsl(var(--border));
+  border-radius: 6px;
+  background: hsl(var(--card));
+  color: hsl(var(--foreground));
+  cursor: pointer;
+}
+
+.folderPickerNavBtn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.folderPickerNavBtn:not(:disabled):hover {
+  background: hsl(var(--muted));
+}
+
+.folderPickerPath {
+  min-width: 0;
+  margin-left: 4px;
+  font-size: 12px;
+  font-family: var(--font-geist-mono, monospace);
+  color: hsl(var(--muted-foreground));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.folderPickerList {
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.folderPickerMessage {
+  padding: 14px 10px;
+  text-align: center;
+  font-size: 12.5px;
+  color: hsl(var(--muted-foreground));
+}
+
+.folderPickerItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 8px;
+  border: none;
+  background: none;
+  border-radius: 6px;
+  color: hsl(var(--foreground));
+  font-size: 13px;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.folderPickerItem:hover {
+  background: hsl(var(--muted));
+}
+
+.folderPickerItem svg {
+  flex-shrink: 0;
+  color: hsl(var(--muted-foreground));
+}
+
+.folderPickerFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 8px 10px;
+  border-top: 1px solid hsl(var(--border));
+}
+
+/* Models section header + refresh button (queries /api/ollama-models). */
+.settingsSectionTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.settingsSectionTitleRow .settingsSectionTitle {
+  margin-bottom: 0;
+}
+
+.modelsRefreshBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  background: none;
+  border: 1px solid hsl(var(--border));
+  border-radius: 6px;
+  color: hsl(var(--muted-foreground));
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.modelsRefreshBtn:hover:not(:disabled) {
+  color: hsl(var(--foreground));
+  border-color: hsl(var(--foreground) / 0.3);
+}
+
+.modelsRefreshBtn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+select.settingsInput {
+  cursor: pointer;
+}
+
+.settingsErrorBox {
+  margin-top: 4px;
+  padding: 10px 12px;
+  background: hsl(var(--destructive) / 0.1);
+  border: 1px solid hsl(var(--destructive) / 0.35);
+  border-radius: 8px;
+  color: hsl(var(--destructive));
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.settingsFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid hsl(var(--border));
+  flex-shrink: 0;
+}
+
+/* ── MCP server list — replaces the old raw JSON textarea ── */
+.mcpEmptyState {
+  text-align: center;
+  padding: 22px 14px;
+  color: hsl(var(--muted-foreground));
+  font-size: 13px;
+  border: 1px dashed hsl(var(--border));
+  border-radius: 10px;
+}
+
+.mcpServerList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mcpServerCard {
+  border: 1px solid hsl(var(--border));
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: hsl(var(--muted) / 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mcpServerCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mcpServerCardHeader .settingsInput {
+  flex: 1;
+  min-width: 0;
+}
+
+.mcpServerRemoveBtn {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  border: 1px solid hsl(var(--border));
+  background: transparent;
+  color: hsl(var(--muted-foreground));
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.mcpServerRemoveBtn:hover {
+  background-color: hsl(var(--destructive) / 0.12);
+  border-color: hsl(var(--destructive) / 0.4);
+  color: hsl(var(--destructive));
+}
+
+.mcpArgsLabel {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: hsl(var(--muted-foreground));
+  margin-top: 2px;
+}
+
+.mcpArgsList {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.mcpArgChip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mcpArgInput {
+  width: auto;
+  flex: 1 1 130px;
+  min-width: 70px;
+  font-size: 12.5px;
+  padding: 6px 8px;
+}
+
+.mcpArgRemove {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  border: 1px solid hsl(var(--border));
+  background: transparent;
+  color: hsl(var(--muted-foreground));
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.mcpArgRemove:hover {
+  background-color: hsl(var(--destructive) / 0.12);
+  border-color: hsl(var(--destructive) / 0.4);
+  color: hsl(var(--destructive));
+}
+
+.mcpAddArgBtn {
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px dashed hsl(var(--border));
+  background: transparent;
+  color: hsl(var(--muted-foreground));
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.mcpAddArgBtn:hover {
+  border-color: hsl(var(--ring));
+  color: hsl(var(--foreground));
+}
+
+.mcpAddServerBtn {
+  margin-top: 10px;
+  width: 100%;
+  font-size: 13px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px dashed hsl(var(--border));
+  background: transparent;
+  color: hsl(var(--muted-foreground));
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 500;
+  transition: border-color 0.15s, color 0.15s, background-color 0.15s;
+}
+
+.mcpAddServerBtn:hover {
+  border-color: hsl(var(--ring));
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--muted) / 0.4);
+}
+
+@media (max-width: 480px) {
+  .settingsRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Per-server enabled toggle. Deliberately its OWN neutral color rather than
+   reusing .autoApproveToggleOn's amber — that amber means "safety gate is
+   bypassed", which doesn't apply here. Enabling an MCP server isn't itself
+   risky (its tools still go through the same approval flow); it just needs
+   its own on/off affordance. */
+.mcpEnabledToggle {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid hsl(var(--border));
+  background: transparent;
+  color: hsl(var(--muted-foreground));
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.mcpEnabledToggle:hover {
+  border-color: hsl(var(--foreground) / 0.3);
+}
+
+.mcpEnabledToggleOn {
+  border-color: hsl(var(--primary) / 0.5);
+  background-color: hsl(var(--primary) / 0.1);
+  color: hsl(var(--foreground));
+  font-weight: 600;
+}
+
+.mcpEnabledSwitch {
+  width: 26px;
+  height: 15px;
+  border-radius: 999px;
+  background-color: hsl(var(--muted-foreground) / 0.35);
+  position: relative;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease;
+}
+
+.mcpEnabledSwitch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background-color: hsl(var(--card));
+  transition: left 0.15s ease;
+}
+
+.mcpEnabledToggleOn .mcpEnabledSwitch {
+  background-color: hsl(var(--primary));
+}
+
+.mcpEnabledToggleOn .mcpEnabledSwitch::after {
+  left: 13px;
+  background-color: hsl(var(--primary-foreground));
+}
+
+/* ── "Thinking..." indicator ──
+   Replaces the old plain-text placeholder shown while waiting for the first
+   token/tool status to arrive, with a small animated three-dot pulse so the
+   agent visibly reads as "alive" rather than possibly stalled. */
+.thinkingIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.thinkingDots {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.thinkingDots span {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: hsl(var(--muted-foreground));
+  animation: thinkingBounce 1.1s ease-in-out infinite;
+}
+
+.thinkingDots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.thinkingDots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes thinkingBounce {
+  0%, 60%, 100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+/* ── Floating "jump to latest message" button ──
+   Appears once the user has scrolled away from the bottom of a long reply;
+   .chatArea is already position:relative so this anchors to it directly. */
+.scrollToBottomBtn {
+  position: absolute;
+  left: 50%;
+  bottom: 112px;
+  transform: translateX(-50%);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--card));
+  color: hsl(var(--foreground));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  z-index: 5;
+  animation: scrollBtnIn 0.15s ease both;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+.scrollToBottomBtn:hover {
+  background-color: hsl(var(--muted));
+  transform: translateX(-50%) translateY(-2px);
+}
+
+@keyframes scrollBtnIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thinkingDots span,
+  .scrollToBottomBtn {
+    animation: none !important;
+  }
+}

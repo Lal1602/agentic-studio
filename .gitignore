@@ -39,3 +39,27 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# agentic app local data — chat history, saved preferences, local db.
+# Personal/sensitive by nature, never meant to leave this machine.
+# .agentic-chats.json is the legacy chat history format (pre SQLite
+# migration) — still ignored here in case it's still on disk locally;
+# .agentic-chats.db (and its WAL/SHM sidecar files) is the current one.
+/.agentic-chats.json
+/.agentic-chats.db
+/.agentic-chats.db-wal
+/.agentic-chats.db-shm
+/.agentic-memory.json
+/dev.db
+/workspace/output/
+
+# agentic app settings — local workspace path + any MCP server config,
+# which can include env vars (API keys/tokens) for third-party MCP servers.
+/.agentic-settings.json
+
+# local dev scratch — ad hoc manual test scripts and debug screenshots,
+# not part of the real Vitest suite and not meant for the public repo.
+/test-office.ts
+/test-search.ts
+/test-tools.txt
+/Claude outputs/
