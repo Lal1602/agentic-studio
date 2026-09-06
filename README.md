@@ -9,6 +9,13 @@ A privacy-first, extensible AI coding agent that runs entirely on your own machi
 
 Built for indie developers who want a Cursor/Claude Code–style workflow without sending their code or their data to the cloud.
 
+## Screenshots
+
+| Landing page | New chat | Multi-mode canvas |
+| :---: | :---: | :---: |
+| [![Landing page](preview/hub.png)](preview/hub.png) | [![New chat](preview/main.png)](preview/main.png) | [![Code editor canvas](preview/preview.png)](preview/preview.png) |
+| Local stats pulled straight from the codebase (tool count, test count, live states) | Quick-start prompts for exploring the project, running commands, querying the database, or generating documents | The code editor canvas open beside the chat, rendered instead of a raw code block |
+
 ## What it can do
 
 - **Codebase-aware chat** — read files, list directories, and grep across your project so the agent can answer questions and make changes with real context.
